@@ -1,6 +1,7 @@
 ﻿using Api_ToDoMongo.Data.Repositories;
+using Api_ToDoMongo.Models;
+using Api_ToDoMongo.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace Api_ToDoMongo.Controllers
 {
@@ -10,38 +11,70 @@ namespace Api_ToDoMongo.Controllers
     {
         private ITarefasRepository _tarefasRepository;
 
+        public TarefasController(ITarefasRepository tarefasRepository)
+        {
+            _tarefasRepository = tarefasRepository;
+        }
 
-
-        // GET: api/<TarefasController>
+        // GET: api/<tarefas>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            var tarefas = _tarefasRepository.Buscar();
+            return Ok(tarefas);
         }
 
-        // GET api/<TarefasController>/5
+        // GET api/<tarefas>/{id}
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult Get(string id)
         {
-            return "value";
+            var tarefa = _tarefasRepository.BuscarPorId(id);
+
+            if (tarefa == null)
+                return NotFound();
+
+            return Ok(tarefa);
         }
 
-        // POST api/<TarefasController>
+        // POST api/<tarefas>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody] TarefasViewModels novaTarefa)
         {
+            //Pode usar o mapper
+            var tarefa = new TarefaModel(novaTarefa.Nome, novaTarefa.Descricao);
+
+            _tarefasRepository.Adicionar(tarefa);
+            return Created("", tarefa);
         }
 
-        // PUT api/<TarefasController>/5
+        // PUT api/<tarefas>/{id}
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public IActionResult Put(string id, [FromBody] TarefasViewModels tarefaAtualizada)
         {
+            var tarefa = _tarefasRepository.BuscarPorId(id);
+
+            if (tarefa == null)
+                return NotFound();
+
+            tarefa.AtualizaTarefas(tarefaAtualizada.Nome, tarefaAtualizada.Descricao, tarefaAtualizada.TarefaConcluida);
+
+            _tarefasRepository.Atualizar(id, tarefa);
+
+            return Ok(tarefa);
         }
 
-        // DELETE api/<TarefasController>/5
+        // DELETE api/<tarefas>/{id}
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(string id)
         {
+            var tarefa = _tarefasRepository.BuscarPorId(id);
+
+            if (tarefa == null)
+                return NotFound();
+
+            _tarefasRepository.Excluir(id);
+
+            return Ok("Tarefa excluida!!");
         }
     }
 }

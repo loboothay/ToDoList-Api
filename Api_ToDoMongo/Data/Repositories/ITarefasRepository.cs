@@ -10,5 +10,7 @@ namespace Api_ToDoMongo.Data.Repositories
 
         IEnumerable<TarefaModel> Buscar();
         TarefaModel BuscarPorId(string id);
+
+        void Excluir(string id);
     }
 }

@@ -36,5 +36,10 @@ namespace Api_ToDoMongo.Data.Repositories
         {
             return _tarefas.Find(tarefas => tarefas.Id == id).FirstOrDefault();
         }
+
+        public void Excluir(string id)
+        {
+            _tarefas.DeleteOne(tarefa => tarefa.Id == id);
+        }
     }
 }
