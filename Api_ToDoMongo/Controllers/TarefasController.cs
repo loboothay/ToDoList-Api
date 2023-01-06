@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Api_ToDoMongo.Data.Repositories;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
 namespace Api_ToDoMongo.Controllers
@@ -7,6 +8,10 @@ namespace Api_ToDoMongo.Controllers
     [ApiController]
     public class TarefasController : ControllerBase
     {
+        private ITarefasRepository _tarefasRepository;
+
+
+
         // GET: api/<TarefasController>
         [HttpGet]
         public IEnumerable<string> Get()
